@@ -17,6 +17,9 @@ fi
 export TF_BASE="$(pwd)/se-demo-autobahn-v2_assets/terraform"
 echo "export TF_BASE=\"$TF_BASE\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 
+export PACKER_BASE="$(pwd)/se-demo-autobahn-v2_assets/packer"
+echo "export PACKER_BASE=\"$PACKER_BASE\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
+
 default_setup_info_text=\
 "This script sets up HCP Packer and TF 
 "
@@ -26,18 +29,22 @@ echo ""
 
 echo "Please provide your HCP Client ID: "
 read hcp_client_id
+HCP_CLIENT_ID=$hcp_client_id 
 echo "export TF_VAR_hcp_client_id=\"$hcp_client_id\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
 
 echo "Please provide your HCP Client Secret: "
 read -s hcp_client_secret
+HCP_CLIENT_SECRET=$hcp_client_secret
 echo "export TF_VAR_hcp_client_secret=\"$hcp_client_secret\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
 
 echo "Please provide your HCP Terraform Organization Name: "
-read -s tfe_org
+read tfe_org
 echo "export TF_VAR_tfe_org=\"$tfe_org\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
+# Update org name in cloud block
+sed -i -e "s/placeholder1234/$tfe_org/g" ${TF_BASE}/build/providers.tf
 
 echo "Please provide your HCP Terraform token: "
 read -s tfe_token
@@ -48,17 +55,19 @@ echo "export TF_VAR_public_key=\"$(cat ~/.ssh/id_rsa.pub)\"" >> ~/.${INSTRUQT_PA
 
 source .bashrc
 
-# cd ${TF_BASE}/boundary-demo-init
-# terraform init
-# terraform apply -auto-approve
-# if [ $? -eq 0 ]; then
-#   touch ${HOME}/.init-success
-# fi
+cd ${TF_BASE}/setup
+terraform init
+terraform apply -auto-approve
+if [ $? -eq 0 ]; then
+  touch ${HOME}/.setup-success
+fi
 
-# cd ${TF_BASE}/boundary-demo-targets
-# terraform init
-# terraform apply -auto-approve
-# if [ $? -eq 0 ]; then
-#   touch ${HOME}/.targets-success
-# fi
+export HCP_PROJECT_ID=`terraform output -raw hcp_project_id`
+
+cd ${PACKER_BASE}
+packer init .
+packer build .
+if [ $? -eq 0 ]; then
+   touch ${HOME}/.packer-success
+fi
 

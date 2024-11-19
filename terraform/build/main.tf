@@ -1,18 +1,5 @@
 
-locals {
-  packer_build_filename = "ubuntu.pkr.hcl"
-}
-
-data "hcp_organization" "demo" {
-}
-
-resource "time_sleep" "wait_for_subnet" {
-    depends_on = [ module.autobahn-demo-vpc ]
-    create_duration = "15s"
-}
-
 data "hcp_packer_version" "ubuntu" {
-  depends_on   = [terraform_data.packer_build]
   project_id   = data.terraform_remote_state.setup.outputs.hcp_project_id
   bucket_name  = "ubuntu-base"
   channel_name = "latest"
@@ -48,7 +35,7 @@ module "web-sec-group" {
   version = "5.2.0"
 
   name   = "web-server-sec-group"
-  vpc_id = module.autobahn-demo-vpc.vpc_id
+  vpc_id = data.terraform_remote_state.setup.outputs.vpc_id
 
   ingress_with_source_security_group_id = [
     {
@@ -67,7 +54,7 @@ module "lb-sec-group" {
   version = "5.2.0"
 
   name   = "lb-sec-group"
-  vpc_id = module.autobahn-demo-vpc.vpc_id
+  vpc_id = data.terraform_remote_state.setup.outputs.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
   ingress_rules = ["http-80-tcp"]
@@ -83,11 +70,10 @@ module "lb-sec-group" {
 
 # Load Balancer Config
 resource "aws_lb" "webapp_lb" {
-  depends_on = [ module.autobahn-demo-vpc ]
   name               = "autobahn-demo-lb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = module.autobahn-demo-vpc.public_subnets
+  subnets            = data.terraform_remote_state.setup.outputs.public_subnets
   security_groups = [module.lb-sec-group.security_group_id]
 
   enable_deletion_protection = false
@@ -101,7 +87,7 @@ resource "aws_lb_target_group" "webapp_targets" {
   name     = "autobahn-demo-webapp-targets"
   port     = 80
   protocol = "TCP"
-  vpc_id   = module.autobahn-demo-vpc.vpc_id
+  vpc_id   = data.terraform_remote_state.setup.outputs.vpc_id
 }
 
 resource "aws_autoscaling_attachment" "webapp_attachment" {
@@ -155,7 +141,7 @@ resource "aws_autoscaling_group" "webapp" {
     triggers = ["launch_template"]
   }
   
-  vpc_zone_identifier       = module.autobahn-demo-vpc.public_subnets
+  vpc_zone_identifier       = data.terraform_remote_state.setup.outputs.public_subnets
 
   instance_maintenance_policy {
     min_healthy_percentage = 50

@@ -59,8 +59,41 @@ resource "tfe_project" "demo_project" {
 }
 
 resource "tfe_workspace" "demo_workspace" {
-  name = "autobahn-demo-main"
+  name = "autobahn-v2-demo-main"
   project_id = tfe_project.demo_project.id
+}
+
+resource "tfe_variable" "aws_key" {
+  key          = "AWS_ACCESS_KEY_ID"
+  value        = var.aws_access_key
+  category     = "env"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "AWS Client Access Key"
+}
+
+resource "tfe_variable" "aws_secret" {
+  key          = "AWS_SECRET_ACCESS_KEY"
+  value        = var.aws_secret_key
+  category     = "env"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "AWS Client Access Key"
+  sensitive = true
+}
+
+resource "tfe_variable" "hcp_client_id" {
+  key          = "HCP_CLIENT_ID"
+  value        = var.hcp_client_id
+  category     = "env"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "HCP Client ID"
+}
+
+resource "tfe_variable" "hcp_client_secret" {
+  key          = "HCP_CLIENT_SECRET"
+  value        = var.hcp_client_secret
+  category     = "env"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "HCP Client Secret"
 }
 
 resource "tfe_workspace_run_task" "packer" {

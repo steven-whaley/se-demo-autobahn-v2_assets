@@ -11,13 +11,16 @@ terraform {
   }
 
   cloud {
-    organization = "swhashi"
+    organization = "placeholder1234"
     workspaces {
-      name = "autobahn-demo-main"
+      name = "autobahn-v2-demo-main"
     }
   }
 }
 
 provider "aws" {
   region     = var.aws_region
+}
+
+provider "hcp" {
 }
