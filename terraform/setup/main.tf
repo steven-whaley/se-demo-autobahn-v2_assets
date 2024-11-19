@@ -65,7 +65,7 @@ resource "tfe_workspace" "demo_workspace" {
 
 resource "tfe_variable" "aws_key" {
   key          = "AWS_ACCESS_KEY_ID"
-  value        = var.aws_access_key
+  value        = var.aws_access_key_id
   category     = "env"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "AWS Client Access Key"
@@ -73,7 +73,7 @@ resource "tfe_variable" "aws_key" {
 
 resource "tfe_variable" "aws_secret" {
   key          = "AWS_SECRET_ACCESS_KEY"
-  value        = var.aws_secret_key
+  value        = var.aws_secret_access_key
   category     = "env"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "AWS Client Access Key"

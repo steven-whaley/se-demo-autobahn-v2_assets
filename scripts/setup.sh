@@ -20,6 +20,9 @@ echo "export TF_BASE=\"$TF_BASE\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 export PACKER_BASE="$(pwd)/se-demo-autobahn-v2_assets/packer"
 echo "export PACKER_BASE=\"$PACKER_BASE\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 
+echo "export TF_VAR_aws_access_key_id=$AWS_ACCESS_KEY_ID" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
+echo "export TF_VAR_aws_secret_access_key='$AWS_SECRET_ACCESS_KEY'" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
+
 default_setup_info_text=\
 "This script sets up HCP Packer and TF 
 "
