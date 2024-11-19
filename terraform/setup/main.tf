@@ -1,11 +1,14 @@
 
 # Create the HCP Project and registry
+resource "random_pet" "project_prefix" {
+  length = 1
+}
 
 data "hcp_organization" "demo" {
 }
 
 resource "hcp_project" "demo" {
-  name = "autobahn-v2-prj"
+  name = "${random_pet.project_prefix.id}-autobahn-v2-prj"
 }
 
 resource "terraform_data" "activate_packer_registry" {
@@ -41,9 +44,9 @@ resource "hcp_packer_run_task" "registry" {
 }
 
 resource "tfe_organization_run_task" "packer" {
-  organization = var.tfe_organization_name
+  organization = var.tfe_org
   url          = hcp_packer_run_task.registry.endpoint_url
-  name         = "autobahn-v2-packer"
+  name         = "${random_pet.project_prefix.id}-autobahn-v2-packer"
   enabled      = true
   description  = "A run task for demostrating Packer/TF Autobahn integration"
   hmac_key = hcp_packer_run_task.registry.hmac_key
@@ -52,7 +55,7 @@ resource "tfe_organization_run_task" "packer" {
 
 ### Create the Workspace in HCPTF that will be run create AWS resources ###
 resource "tfe_project" "demo_project" {
-  name = "autobahn-v2-prj"
+  name = "${random_pet.project_prefix.id}-autobahn-v2-prj"
 }
 
 resource "tfe_workspace" "demo_workspace" {

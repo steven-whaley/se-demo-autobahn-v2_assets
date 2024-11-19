@@ -3,77 +3,12 @@ locals {
   packer_build_filename = "ubuntu.pkr.hcl"
 }
 
-data "doormat_aws_credentials" "creds" {
-  provider = doormat
-  role_arn = data.terraform_remote_state.setup.outputs.doormat_role_arn
-}
-
 data "hcp_organization" "demo" {
 }
 
 resource "time_sleep" "wait_for_subnet" {
     depends_on = [ module.autobahn-demo-vpc ]
     create_duration = "15s"
-}
-
-resource "terraform_data" "packer_build" {
-  depends_on = [ time_sleep.wait_for_subnet ]
-  triggers_replace = [var.packer_version]  
-  
-  provisioner "local-exec" {
-    command = <<EOF
-      #!/usr/bin/env bash
-
-      if ! command -v packer &> /dev/null; then
-        curl -fsSL https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip -o packer.zip
-        unzip packer.zip
-      fi
-
-      set -e # this ensures that if any of the commands fail the entire thing fails
-
-      PKR_VAR_aws_region=${var.aws_region} \
-      PKR_VAR_version=${var.packer_version} \
-      PKR_VAR_demo_prefix=${var.demo_prefix} \
-      ./packer init ${local.packer_build_filename}
-
-      echo "Running Packer to build and push image to HCP Packer... v1"
-      AWS_ACCESS_KEY=${data.doormat_aws_credentials.creds.access_key} \
-      AWS_SECRET_KEY=${data.doormat_aws_credentials.creds.secret_key} \
-      AWS_SESSION_TOKEN=${data.doormat_aws_credentials.creds.token} \
-      HCP_PROJECT_ID=${data.terraform_remote_state.setup.outputs.hcp_project_id} \
-      HCP_CLIENT_ID=${var.hcp_client_id} \
-      HCP_CLIENT_SECRET=${var.hcp_client_secret} \
-      PKR_VAR_aws_region=${var.aws_region} \
-      PKR_VAR_version=${var.packer_version} \
-      PKR_VAR_demo_prefix=${var.demo_prefix} \
-      ./packer build ${local.packer_build_filename}
-      EOF
-  }
-}
-
-module "autobahn-demo-vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.14.0"
-
-  name = "${var.demo_prefix}-vpc"
-  cidr = "172.25.0.0/16"
-
-  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
-  private_subnets = ["172.25.1.0/24", "172.25.2.0/24"]
-  public_subnets  = ["172.25.11.0/24", "172.25.12.0/24"]
-
-  create_igw = true
-  enable_nat_gateway   = true
-  enable_vpn_gateway   = false
-  enable_dns_hostnames = true
-
-  public_subnet_tags = {
-    Name = "${var.demo_prefix}-subnet"
-  }
-
-  vpc_tags = {
-    Name = "${var.demo_prefix}-vpc"
-  }
 }
 
 data "hcp_packer_version" "ubuntu" {

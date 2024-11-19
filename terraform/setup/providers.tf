@@ -6,20 +6,22 @@ terraform {
     aws = {
       version = "5.76.0"
     }
+    hcp = {
+      source = "hashicorp/hcp"
+      version = "0.99.0"
+    }
   }
-}
-
-provider "tfe" {
-  token        = var.tfe_token
-  organization = var.tfe_organization_name
-}
-
-provider "hcp" {
-  client_id = var.hcp_client_id
-  client_secret = var.hcp_client_secret
 }
 
 provider "aws" {
   region = var.aws_region
 }
 
+provider "tfe" {
+  organization = var.tfe_org
+}
+
+provider "hcp" {
+  client_id = var.hcp_client_id
+  client_secret = var.hcp_client_secret
+}
