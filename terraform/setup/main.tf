@@ -94,7 +94,34 @@ resource "tfe_variable" "hcp_client_secret" {
   category     = "env"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "HCP Client Secret"
+  sensitive = true
 }
+
+resource "tfe_variable" "vpc_id" {
+  key          = "vpc_id"
+  value        = module.autobahn-demo-vpc.vpc_id
+  category     = "terraform"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "VPC ID"
+}
+
+resource "tfe_variable" "public_subnets" {
+  key          = "public_subnets"
+  value        = module.autobahn-demo-vpc.public_subnets
+  category     = "terraform"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "Public Subnets created by VPC module"
+}
+
+resource "tfe_variable" "project_id" {
+  key          = "hcp_project_id"
+  value        = hcp_project.demo.resource_id
+  category     = "terraform"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "HCP Project ID"
+}
+
+# Create Packer run task
 
 resource "tfe_workspace_run_task" "packer" {
   workspace_id      = tfe_workspace.demo_workspace.id

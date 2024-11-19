@@ -32,13 +32,13 @@ echo ""
 
 echo "Please provide your HCP Client ID: "
 read hcp_client_id
-HCP_CLIENT_ID=$hcp_client_id 
+export HCP_CLIENT_ID=$hcp_client_id 
 echo "export TF_VAR_hcp_client_id=\"$hcp_client_id\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
 
 echo "Please provide your HCP Client Secret: "
 read -s hcp_client_secret
-HCP_CLIENT_SECRET=$hcp_client_secret
+export HCP_CLIENT_SECRET=$hcp_client_secret
 echo "export TF_VAR_hcp_client_secret=\"$hcp_client_secret\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
 
@@ -46,6 +46,7 @@ echo "Please provide your HCP Terraform Organization Name: "
 read tfe_org
 echo "export TF_VAR_tfe_org=\"$tfe_org\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
+
 # Update org name in cloud block
 sed -i -e "s/placeholder1234/$tfe_org/g" ${TF_BASE}/build/providers.tf
 
@@ -53,6 +54,20 @@ echo "Please provide your HCP Terraform token: "
 read -s tfe_token
 echo "export TFE_TOKEN=\"$tfe_token\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
+
+# Write terraform credentials file for remote apply
+if [ ! -d ${HOME}/.terraform.d ]; then
+    mkdir .terraform.d
+    cat <<EOF >> .terraform.d/credentials.tfrc.json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "$tfe_token"
+    }
+  }
+}
+EOF
+fi
 
 echo "export TF_VAR_public_key=\"$(cat ~/.ssh/id_rsa.pub)\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 
@@ -67,10 +82,16 @@ fi
 
 export HCP_PROJECT_ID=`terraform output -raw hcp_project_id`
 
-cd ${PACKER_BASE}
-packer init .
-packer build .
-if [ $? -eq 0 ]; then
-   touch ${HOME}/.packer-success
-fi
-
+# Allow to not rerun packer
+if [ -f ${HOME}/.packer-success ]; then
+  echo "Rerun packer? Enter 'yes' to rerun."
+  read rerun_packer
+  if [ "$rerun_packer" == "yes" ]; then
+    cd ${PACKER_BASE}
+    packer init .
+    packer build .
+    if [ $? -eq 0 ]; then
+        touch ${HOME}/.packer-success
+    fi
+  fi
+fi  

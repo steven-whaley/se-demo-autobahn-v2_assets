@@ -1,12 +1,12 @@
 
 data "hcp_packer_version" "ubuntu" {
-  project_id   = data.terraform_remote_state.setup.outputs.hcp_project_id
+  project_id   = var.hcp_project_id
   bucket_name  = "ubuntu-base"
   channel_name = "latest"
 }
 
 data "hcp_packer_artifact" "ubuntu_this_region" {
-  project_id  = data.terraform_remote_state.setup.outputs.hcp_project_id
+  project_id  = var.hcp_project_id
   bucket_name = "ubuntu-base"
   platform    = "aws"
   version_fingerprint = data.hcp_packer_version.ubuntu.fingerprint
@@ -35,7 +35,7 @@ module "web-sec-group" {
   version = "5.2.0"
 
   name   = "web-server-sec-group"
-  vpc_id = data.terraform_remote_state.setup.outputs.vpc_id
+  vpc_id = var.vpc_id
 
   ingress_with_source_security_group_id = [
     {
@@ -54,7 +54,7 @@ module "lb-sec-group" {
   version = "5.2.0"
 
   name   = "lb-sec-group"
-  vpc_id = data.terraform_remote_state.setup.outputs.vpc_id
+  vpc_id = var.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
   ingress_rules = ["http-80-tcp"]
@@ -73,7 +73,7 @@ resource "aws_lb" "webapp_lb" {
   name               = "autobahn-demo-lb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = data.terraform_remote_state.setup.outputs.public_subnets
+  subnets            = var.public_subnets
   security_groups = [module.lb-sec-group.security_group_id]
 
   enable_deletion_protection = false
@@ -87,7 +87,7 @@ resource "aws_lb_target_group" "webapp_targets" {
   name     = "autobahn-demo-webapp-targets"
   port     = 80
   protocol = "TCP"
-  vpc_id   = data.terraform_remote_state.setup.outputs.vpc_id
+  vpc_id   = var.vpc_id
 }
 
 resource "aws_autoscaling_attachment" "webapp_attachment" {
@@ -141,7 +141,7 @@ resource "aws_autoscaling_group" "webapp" {
     triggers = ["launch_template"]
   }
   
-  vpc_zone_identifier       = data.terraform_remote_state.setup.outputs.public_subnets
+  vpc_zone_identifier       = var.public_subnets
 
   instance_maintenance_policy {
     min_healthy_percentage = 50
