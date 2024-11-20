@@ -7,6 +7,7 @@ packer {
   }
 }
 
+### Update the verion here ###
 variable "version" {
   type    = string
   default = "1.0.0"

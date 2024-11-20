@@ -9,6 +9,7 @@ data "hcp_organization" "demo" {
 
 resource "hcp_project" "demo" {
   name = "${random_pet.project_prefix.id}-autobahn-v2-prj"
+  description = "Autobahn v2 Demo Project created by Instruqt"
 }
 
 resource "terraform_data" "activate_packer_registry" {
@@ -63,6 +64,7 @@ resource "tfe_workspace" "demo_workspace" {
   project_id = tfe_project.demo_project.id
   assessments_enabled = true
   auto_apply = true
+  force_delete = true
 }
 
 resource "tfe_variable" "aws_key" {

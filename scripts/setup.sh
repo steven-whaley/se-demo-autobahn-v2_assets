@@ -32,13 +32,13 @@ echo ""
 
 echo "Please provide your HCP Client ID: "
 read hcp_client_id
-export HCP_CLIENT_ID=$hcp_client_id 
+echo "export HCP_CLIENT_ID=\"$hcp_client_id\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo "export TF_VAR_hcp_client_id=\"$hcp_client_id\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
 
 echo "Please provide your HCP Client Secret: "
 read -s hcp_client_secret
-export HCP_CLIENT_SECRET=$hcp_client_secret
+echo "export HCP_CLIENT_SECRET=\"$hcp_client_secret\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo "export TF_VAR_hcp_client_secret=\"$hcp_client_secret\"" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 echo ""
 
@@ -82,15 +82,6 @@ fi
 
 export HCP_PROJECT_ID=`terraform output -raw hcp_project_id`
 
-if [ ! -f ${HOME}/.packer-success ]; then
-    cd ${PACKER_BASE}
-    packer init .
-    packer build .
-    if [ $? -eq 0 ]; then
-        touch ${HOME}/.packer-success
-    fi
-fi
-
 # Allow to not rerun packer
 if [ -f ${HOME}/.packer-success ]; then
   echo "Rerun packer? Enter 'yes' to rerun."
@@ -104,6 +95,15 @@ if [ -f ${HOME}/.packer-success ]; then
     fi
   fi
 fi  
+
+if [ ! -f ${HOME}/.packer-success ]; then
+    cd ${PACKER_BASE}
+    packer init .
+    packer build .
+    if [ $? -eq 0 ]; then
+        touch ${HOME}/.packer-success
+    fi
+fi 
 
 cd ${TF_BASE}/build
 terraform init
