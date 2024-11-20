@@ -10,6 +10,9 @@ terraform {
       source = "hashicorp/hcp"
       version = "0.99.0"
     }
+    terraform = {
+      source = "terraform.io/builtin/terraform"
+    }
   }
 }
 

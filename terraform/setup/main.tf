@@ -107,7 +107,7 @@ resource "tfe_variable" "vpc_id" {
 
 resource "tfe_variable" "public_subnets" {
   key          = "public_subnets"
-  value        = module.autobahn-demo-vpc.public_subnets
+  value        = provider::terraform::encode_tfvars(module.autobahn-demo-vpc.public_subnets)
   category     = "terraform"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "Public Subnets created by VPC module"
