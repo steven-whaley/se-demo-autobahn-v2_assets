@@ -138,7 +138,6 @@ resource "aws_autoscaling_group" "webapp" {
         min_healthy_percentage = 50
         skip_matching = true
     }
-    triggers = ["launch_template"]
   }
   
   vpc_zone_identifier       = var.public_subnets

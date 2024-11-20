@@ -82,6 +82,15 @@ fi
 
 export HCP_PROJECT_ID=`terraform output -raw hcp_project_id`
 
+if [ ! -f ${HOME}/.packer-success ]; then
+    cd ${PACKER_BASE}
+    packer init .
+    packer build .
+    if [ $? -eq 0 ]; then
+        touch ${HOME}/.packer-success
+    fi
+fi
+
 # Allow to not rerun packer
 if [ -f ${HOME}/.packer-success ]; then
   echo "Rerun packer? Enter 'yes' to rerun."
@@ -95,3 +104,10 @@ if [ -f ${HOME}/.packer-success ]; then
     fi
   fi
 fi  
+
+cd ${TF_BASE}/build
+terraform init
+terraform apply -auto-approve
+if [ $? -eq 0 ]; then
+  touch ${HOME}/.build-success
+fi

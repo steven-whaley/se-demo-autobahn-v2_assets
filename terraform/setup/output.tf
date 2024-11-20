@@ -22,3 +22,8 @@ output "public_subnets" {
   description = "The list of public subnets we created"
   value = module.autobahn-demo-vpc.public_subnets
 }
+
+output "project_name" {
+  description = "The name of the HCP Project we created"
+  value = hcp_project.demo.name
+}

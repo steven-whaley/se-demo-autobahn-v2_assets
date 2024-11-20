@@ -61,6 +61,8 @@ resource "tfe_project" "demo_project" {
 resource "tfe_workspace" "demo_workspace" {
   name = "autobahn-v2-demo-main"
   project_id = tfe_project.demo_project.id
+  assessments_enabled = true
+  auto_apply = true
 }
 
 resource "tfe_variable" "aws_key" {
