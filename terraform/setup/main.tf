@@ -30,7 +30,7 @@ resource "terraform_data" "activate_packer_registry" {
       | jq -r '.access_token')
       curl -s -X PUT \
         -H "Authorization: Bearer $token" \
-        -d '{"feature_tier": "STANDARD"}' \
+        -d '{"feature_tier": "PLUS"}' \
         https://api.cloud.hashicorp.com/packer/2023-01-01/organizations/${data.hcp_organization.demo.resource_id}/projects/${hcp_project.demo.resource_id}/registry
         sleep 5 # to allow the registry to activate before the packer builds start
       EOF
