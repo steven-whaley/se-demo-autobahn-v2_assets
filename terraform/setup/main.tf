@@ -111,6 +111,7 @@ resource "tfe_variable" "public_subnets" {
   category     = "terraform"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "Public Subnets created by VPC module"
+  hcl = true
 }
 
 resource "tfe_variable" "project_id" {
