@@ -13,5 +13,5 @@ variable "hcp_project_id" {
 }
 
 variable "public_subnets" {
-  type = list(string)
+  type	= tuple([string, string])
 }
