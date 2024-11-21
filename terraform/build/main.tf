@@ -14,8 +14,8 @@ data "hcp_packer_artifact" "ubuntu_this_region" {
 }
 
 resource "aws_key_pair" "ssh-key" {
-  key_name   = "swkey"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFzzLNTZnW40ZyXOsI7IhfGxhsalitHspxxkO9rDKvRAaqAA6a8hLbQoV69XrH98h7uCKc791vAIMV7q45tFaLBGRsOUjhS4BORKW1CB3X9Y44YrkbvkV2nuKHfTRbItCI5JPliBOkl/hBDgCH963x//7BzBzkhf12XAMphQKYkUq8xBYwc5cfF4UlJSFQtOspgFQyOh1yGmosJEv2XLDiylKy74wc9DhVjeQlGQj4aO1iW4P7tFC5Z45uSoV/vEJVkN+SvgjoKbNw0UztBT4wSnKqElbT4/jO7hAnSzxYR+6DOD8UaC8mgGU25s2stMBILzZlndWmHk1+DA39lm4ZjOY/rQrbQK0DMuOVE6aU1xkenkfdtIBEVIMWKAHrVbjZ8C6/V63yLTAJzABv4MKHmZPYe1GjeiExJftGml44KRsIhuasVRTiS2Zt3AkqigyEkwgErdhYfnOyfjm5Vu8FiuTDowi8clNiTASlA9+wdlE7tylIUsomhrBG+aRvlE0= swhaley@swhaley-M43L9KG44N"
+  key_name   = "autobahn-v2-key"
+  public_key = var.public_key
 }
 
 module "web-sec-group" {

@@ -118,6 +118,14 @@ resource "tfe_variable" "public_subnets" {
   hcl = true
 }
 
+resource "tfe_variable" "public_key" {
+  key          = "public_key"
+  value        = var.public_key
+  category     = "terraform"
+  workspace_id = tfe_workspace.demo_workspace.id
+  description  = "SSH public key"
+}
+
 resource "tfe_variable" "project_id" {
   key          = "hcp_project_id"
   value        = hcp_project.demo.resource_id

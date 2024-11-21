@@ -14,6 +14,11 @@ variable "aws_secret_access_key" {
   description = "AWS Secret Access Key"
 }
 
+variable "public_key" {
+  type = string
+  description = "The SSH public key to associate with the EC2 instances"
+}
+
 # HCP
 variable "hcp_client_id" {
   type = string
@@ -27,3 +32,4 @@ variable hcp_client_secret {
 variable "tfe_org" {
   type=string
 }
+
