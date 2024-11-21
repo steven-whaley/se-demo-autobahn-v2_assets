@@ -62,7 +62,7 @@ source "amazon-ebs" "amazon-linux" {
 }
 
 build {
-  name = "terramino-demo-image"
+  name = "${var.ami_prefix}-terramino-image"
 
   hcp_packer_registry {
     bucket_name = "${var.ami_prefix}-terramino"
@@ -97,6 +97,7 @@ build {
       "sudo yum update -y",
       "sudo yum install httpd -y",
       "echo '*** Completed Installing Apache (httpd)'",
+      "sed 's/VAR_VERSION/${var.version}/g' /home/ec2-user/files/basic.html"
       "sudo mv /home/ec2-user/files/* /var/www/html/",
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd"
