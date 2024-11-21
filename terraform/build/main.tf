@@ -1,15 +1,15 @@
 
-data "hcp_packer_version" "ubuntu" {
+data "hcp_packer_version" "terramino" {
   project_id   = var.hcp_project_id
-  bucket_name  = "ubuntu-base"
+  bucket_name  = "autobahn-v2-demo-terramino"
   channel_name = "latest"
 }
 
-data "hcp_packer_artifact" "ubuntu_this_region" {
+data "hcp_packer_artifact" "terramino_this_region" {
   project_id          = var.hcp_project_id
-  bucket_name         = "ubuntu-base"
+  bucket_name         = "autobahn-v2-demo-terramino"
   platform            = "aws"
-  version_fingerprint = data.hcp_packer_version.ubuntu.fingerprint
+  version_fingerprint = data.hcp_packer_version.terramino.fingerprint
   region              = var.aws_region
 }
 
@@ -45,7 +45,7 @@ module "lb-sec-group" {
   vpc_id = var.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules       = ["http-80-tcp"]
+  ingress_rules       = ["http-80-tcp", "ssh-tcp"]
 
   egress_with_source_security_group_id = [
     {
@@ -96,7 +96,7 @@ resource "aws_lb_listener" "webapp_listener" {
 
 resource "aws_launch_template" "webapp" {
   name_prefix            = "webapp"
-  image_id               = data.hcp_packer_artifact.ubuntu_this_region.external_identifier
+  image_id               = data.hcp_packer_artifact.terramino_this_region.external_identifier
   instance_type          = "t3.small"
   update_default_version = true
   key_name               = aws_key_pair.ssh-key.key_name
