@@ -99,6 +99,7 @@ resource "aws_launch_template" "webapp" {
   image_id      = data.hcp_packer_artifact.ubuntu_this_region.external_identifier
   instance_type = "t3.small"
   update_default_version = true
+  key_name = aws_key_pair.ssh-key.key_name
 
   network_interfaces {
     associate_public_ip_address = true
