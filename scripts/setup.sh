@@ -80,7 +80,8 @@ if [ $? -eq 0 ]; then
   touch ${HOME}/.setup-success
 fi
 
-export HCP_PROJECT_ID=`terraform output -raw hcp_project_id`
+export HCP_PROJECT_ID=`terraform output -state=$HOME/se-demo-autobahn-v2_assets/terraform/setup/terraform.tfstate -raw hcp_project_id`
+echo "export HCP_PROJECT_ID=$HCP_PROJECT_ID" >> ~/.${INSTRUQT_PARTICIPANT_ID}-env.sh
 
 # Allow to not rerun packer
 if [ -f ${HOME}/.packer-success ]; then

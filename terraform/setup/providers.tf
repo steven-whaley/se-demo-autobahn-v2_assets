@@ -7,7 +7,7 @@ terraform {
       version = "5.76.0"
     }
     hcp = {
-      source = "hashicorp/hcp"
+      source  = "hashicorp/hcp"
       version = "0.99.0"
     }
     terraform = {
@@ -25,6 +25,6 @@ provider "tfe" {
 }
 
 provider "hcp" {
-  client_id = var.hcp_client_id
+  client_id     = var.hcp_client_id
   client_secret = var.hcp_client_secret
 }

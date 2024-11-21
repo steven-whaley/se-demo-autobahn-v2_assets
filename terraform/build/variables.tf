@@ -1,7 +1,7 @@
 variable "aws_region" {
-  type = string
+  type        = string
   description = "The AWS region to deploy the resources to. Default: us-west-2"
-  default = "us-west-2"
+  default     = "us-west-2"
 }
 
 variable "vpc_id" {
@@ -13,7 +13,7 @@ variable "hcp_project_id" {
 }
 
 variable "public_subnets" {
-  type	= tuple([string, string])
+  type = tuple([string, string])
 }
 
 variable "public_key" {

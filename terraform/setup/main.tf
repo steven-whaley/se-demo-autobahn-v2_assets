@@ -8,7 +8,7 @@ data "hcp_organization" "demo" {
 }
 
 resource "hcp_project" "demo" {
-  name = "${random_pet.project_prefix.id}-autobahn-v2-prj"
+  name        = "${random_pet.project_prefix.id}-autobahn-v2-prj"
   description = "Autobahn v2 Demo Project created by Instruqt"
 }
 
@@ -40,7 +40,7 @@ resource "terraform_data" "activate_packer_registry" {
 # Create the HCP Packer run task in HCPTF
 
 resource "hcp_packer_run_task" "registry" {
-  depends_on = [ terraform_data.activate_packer_registry ]
+  depends_on = [terraform_data.activate_packer_registry]
   project_id = hcp_project.demo.resource_id
 }
 
@@ -50,7 +50,7 @@ resource "tfe_organization_run_task" "packer" {
   name         = "${random_pet.project_prefix.id}-autobahn-v2-packer"
   enabled      = true
   description  = "A run task for demostrating Packer/TF Autobahn integration"
-  hmac_key = hcp_packer_run_task.registry.hmac_key
+  hmac_key     = hcp_packer_run_task.registry.hmac_key
 }
 
 
@@ -60,11 +60,11 @@ resource "tfe_project" "demo_project" {
 }
 
 resource "tfe_workspace" "demo_workspace" {
-  name = "autobahn-v2-demo-main"
-  project_id = tfe_project.demo_project.id
+  name                = "autobahn-v2-demo-main"
+  project_id          = tfe_project.demo_project.id
   assessments_enabled = true
-  auto_apply = true
-  force_delete = true
+  auto_apply          = true
+  force_delete        = true
 }
 
 resource "tfe_variable" "aws_key" {
@@ -81,7 +81,7 @@ resource "tfe_variable" "aws_secret" {
   category     = "env"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "AWS Client Access Key"
-  sensitive = true
+  sensitive    = true
 }
 
 resource "tfe_variable" "hcp_client_id" {
@@ -98,7 +98,7 @@ resource "tfe_variable" "hcp_client_secret" {
   category     = "env"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "HCP Client Secret"
-  sensitive = true
+  sensitive    = true
 }
 
 resource "tfe_variable" "vpc_id" {
@@ -115,7 +115,7 @@ resource "tfe_variable" "public_subnets" {
   category     = "terraform"
   workspace_id = tfe_workspace.demo_workspace.id
   description  = "Public Subnets created by VPC module"
-  hcl = true
+  hcl          = true
 }
 
 resource "tfe_variable" "public_key" {
@@ -140,7 +140,7 @@ resource "tfe_workspace_run_task" "packer" {
   workspace_id      = tfe_workspace.demo_workspace.id
   task_id           = tfe_organization_run_task.packer.id
   enforcement_level = "mandatory"
-  stages = ["post_plan"]
+  stages            = ["post_plan"]
 }
 
 data "aws_availability_zones" "available" {
@@ -158,7 +158,7 @@ module "autobahn-demo-vpc" {
   private_subnets = ["172.25.1.0/24", "172.25.2.0/24"]
   public_subnets  = ["172.25.11.0/24", "172.25.12.0/24"]
 
-  create_igw = true
+  create_igw           = true
   enable_nat_gateway   = true
   enable_vpn_gateway   = false
   enable_dns_hostnames = true

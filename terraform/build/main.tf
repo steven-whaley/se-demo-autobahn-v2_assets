@@ -6,9 +6,9 @@ data "hcp_packer_version" "ubuntu" {
 }
 
 data "hcp_packer_artifact" "ubuntu_this_region" {
-  project_id  = var.hcp_project_id
-  bucket_name = "ubuntu-base"
-  platform    = "aws"
+  project_id          = var.hcp_project_id
+  bucket_name         = "ubuntu-base"
+  platform            = "aws"
   version_fingerprint = data.hcp_packer_version.ubuntu.fingerprint
   region              = var.aws_region
 }
@@ -27,9 +27,9 @@ module "web-sec-group" {
 
   ingress_with_source_security_group_id = [
     {
-        rule = "http-80-tcp"
-        description = "Allow HTTP from load balancer"
-        source_security_group_id = module.lb-sec-group.security_group_id
+      rule                     = "http-80-tcp"
+      description              = "Allow HTTP from load balancer"
+      source_security_group_id = module.lb-sec-group.security_group_id
     }
   ]
 
@@ -45,7 +45,7 @@ module "lb-sec-group" {
   vpc_id = var.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules = ["http-80-tcp"]
+  ingress_rules       = ["http-80-tcp"]
 
   egress_with_source_security_group_id = [
     {
@@ -62,7 +62,7 @@ resource "aws_lb" "webapp_lb" {
   internal           = false
   load_balancer_type = "network"
   subnets            = var.public_subnets
-  security_groups = [module.lb-sec-group.security_group_id]
+  security_groups    = [module.lb-sec-group.security_group_id]
 
   enable_deletion_protection = false
 
@@ -79,8 +79,8 @@ resource "aws_lb_target_group" "webapp_targets" {
 }
 
 resource "aws_autoscaling_attachment" "webapp_attachment" {
-    autoscaling_group_name = aws_autoscaling_group.webapp.name
-    lb_target_group_arn = aws_lb_target_group.webapp_targets.arn
+  autoscaling_group_name = aws_autoscaling_group.webapp.name
+  lb_target_group_arn    = aws_lb_target_group.webapp_targets.arn
 }
 
 resource "aws_lb_listener" "webapp_listener" {
@@ -95,15 +95,15 @@ resource "aws_lb_listener" "webapp_listener" {
 }
 
 resource "aws_launch_template" "webapp" {
-  name_prefix   = "webapp"
-  image_id      = data.hcp_packer_artifact.ubuntu_this_region.external_identifier
-  instance_type = "t3.small"
+  name_prefix            = "webapp"
+  image_id               = data.hcp_packer_artifact.ubuntu_this_region.external_identifier
+  instance_type          = "t3.small"
   update_default_version = true
-  key_name = aws_key_pair.ssh-key.key_name
+  key_name               = aws_key_pair.ssh-key.key_name
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups = [module.web-sec-group.security_group_id]
+    security_groups             = [module.web-sec-group.security_group_id]
   }
 }
 
@@ -114,8 +114,8 @@ resource "aws_autoscaling_group" "webapp" {
   health_check_grace_period = 120
   health_check_type         = "ELB"
   desired_capacity          = 2
-  
- launch_template {
+
+  launch_template {
     id      = aws_launch_template.webapp.id
     version = aws_launch_template.webapp.latest_version
   }
@@ -124,12 +124,12 @@ resource "aws_autoscaling_group" "webapp" {
     strategy = "Rolling"
 
     preferences {
-        min_healthy_percentage = 50
-        skip_matching = true
+      min_healthy_percentage = 50
+      skip_matching          = true
     }
   }
-  
-  vpc_zone_identifier       = var.public_subnets
+
+  vpc_zone_identifier = var.public_subnets
 
   instance_maintenance_policy {
     min_healthy_percentage = 50
@@ -138,6 +138,6 @@ resource "aws_autoscaling_group" "webapp" {
 
   timeouts {
     delete = "15m"
-  } 
+  }
 }
 
