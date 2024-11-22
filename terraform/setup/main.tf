@@ -32,7 +32,7 @@ resource "terraform_data" "activate_packer_registry" {
         -H "Authorization: Bearer $token" \
         -d '{"feature_tier": "PLUS"}' \
         https://api.cloud.hashicorp.com/packer/2023-01-01/organizations/${data.hcp_organization.demo.resource_id}/projects/${hcp_project.demo.resource_id}/registry
-        sleep 5 # to allow the registry to activate before the packer builds start
+        sleep 20 # to allow the registry to activate before the packer builds start
       EOF
   }
 }
@@ -44,6 +44,7 @@ resource "hcp_packer_bucket" "terramino" {
 }
 
 resource "hcp_packer_channel" "production" {
+  project_id = hcp_project.demo.resource_id
   name        = "Production"
   bucket_name = hcp_packer_bucket.terramino.name
 } 
