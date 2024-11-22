@@ -97,7 +97,7 @@ build {
       "sudo yum update -y",
       "sudo yum install httpd -y",
       "echo '*** Completed Installing Apache (httpd)'",
-      "sed 's/VAR_VERSION/${var.version}/g' files/basic.html",
+      "sed -i -e 's/VAR_VERSION/${var.version}/g' files/index.html",
       "sudo mv /home/ec2-user/files/* /var/www/html/",
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd"
