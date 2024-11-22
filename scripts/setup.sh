@@ -106,6 +106,13 @@ if [ ! -f ${HOME}/.packer-success ]; then
     fi
 fi 
 
+cd ${TF_BASE}/assign
+terraform init
+terraform apply -auto-approve
+if [ $? -eq 0 ]; then
+  touch ${HOME}/.assign-success
+fi
+
 cd ${TF_BASE}/build
 terraform init
 terraform apply -auto-approve

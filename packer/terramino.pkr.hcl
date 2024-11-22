@@ -65,7 +65,7 @@ build {
   name = "${var.ami_prefix}-terramino-image"
 
   hcp_packer_registry {
-    bucket_name = "${var.ami_prefix}-terramino"
+    bucket_name = "autobahn-v2-demo-terramino"
     description = <<EOT
   EC2 image with apache web server on it and terramino app. 
       EOT

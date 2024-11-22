@@ -37,6 +37,17 @@ resource "terraform_data" "activate_packer_registry" {
   }
 }
 
+# Create Bucket and Production Channel
+resource "hcp_packer_bucket" "terramino" {
+  name = "autobahn-v2-demo-terramino"
+  project_id = hcp_project.demo.resource_id
+}
+
+resource "hcp_packer_channel" "production" {
+  name        = "Production"
+  bucket_name = hcp_packer_bucket.terramino.name
+} 
+
 # Create the HCP Packer run task in HCPTF
 
 resource "hcp_packer_run_task" "registry" {
