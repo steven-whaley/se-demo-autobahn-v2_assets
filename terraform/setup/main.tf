@@ -32,13 +32,14 @@ resource "terraform_data" "activate_packer_registry" {
         -H "Authorization: Bearer $token" \
         -d '{"feature_tier": "PLUS"}' \
         https://api.cloud.hashicorp.com/packer/2023-01-01/organizations/${data.hcp_organization.demo.resource_id}/projects/${hcp_project.demo.resource_id}/registry
-        sleep 20 # to allow the registry to activate before the packer builds start
+        sleep 30 # to allow the registry to activate before the packer builds start
       EOF
   }
 }
 
 # Create Bucket and Production Channel
 resource "hcp_packer_bucket" "terramino" {
+  depends_on = [ terraform_data.activate_packer_registry ]
   name = "autobahn-v2-demo-terramino"
   project_id = hcp_project.demo.resource_id
 }

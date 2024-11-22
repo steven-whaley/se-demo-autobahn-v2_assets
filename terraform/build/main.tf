@@ -1,15 +1,9 @@
 
-data "hcp_packer_version" "terramino" {
-  project_id   = var.hcp_project_id
-  bucket_name  = "autobahn-v2-demo-terramino"
-  channel_name = "latest"
-}
-
 data "hcp_packer_artifact" "terramino_this_region" {
   project_id          = var.hcp_project_id
   bucket_name         = "autobahn-v2-demo-terramino"
   platform            = "aws"
-  version_fingerprint = data.hcp_packer_version.terramino.fingerprint
+  channel_name = "Production"
   region              = var.aws_region
 }
 
