@@ -100,28 +100,17 @@ build {
       "sed -i -e 's/VAR_VERSION/${var.version}/g' files/index.html",
       "sudo mv /home/ec2-user/files/* /var/www/html/",
       "sudo systemctl enable httpd",
-      "sudo systemctl start httpd"
-    ]
-  }
-
-    # Install trivy
-  provisioner "shell" {
-    inline = [
-      "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin latest"
-    ]
-  }
-
-  # Run trivy to generate the SBOM
-  provisioner "shell" {
-    inline = [
-      "trivy fs --format cyclonedx --output /tmp/sbom_cyclonedx_${var.image_version}.json /"
+      "sudo systemctl start httpd",
+      "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin latest",
+      "trivy fs --format cyclonedx --output /tmp/sbom_cyclonedx_${var.version}.json /"
     ]
   }
 
   # Upload SBOM
   provisioner "hcp-sbom" {
-    source      = "/tmp/sbom_cyclonedx_${var.image_version}.json"
-    destination = "sbom_cyclonedx_${var.image_version}.json"
+    source      = "/tmp/sbom_cyclonedx_${var.version}.json"
+    destination = "sbom_cyclonedx_${var.version}.json"
     sbom_name   = "sbom-cyclonedx-ubuntu"
   }
+
 }
