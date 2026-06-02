@@ -101,7 +101,6 @@ build {
       "sudo mv /home/ec2-user/files/* /var/www/html/",
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd",
-      "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin latest",
     ]
   }
 
