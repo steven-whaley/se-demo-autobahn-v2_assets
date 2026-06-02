@@ -102,14 +102,13 @@ build {
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd",
       "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin latest",
-      "trivy fs --format cyclonedx --output /tmp/sbom_cyclonedx_${var.version}.json /"
     ]
   }
 
   # Upload SBOM
   provisioner "hcp-sbom" {
-    source      = "/tmp/sbom_cyclonedx_${var.version}.json"
-    destination = "sbom_cyclonedx_${var.version}.json"
+    auto_generate = true
+    destination = "./sbom/sbom_cyclonedx.json"
     sbom_name   = "sbom-cyclonedx-ubuntu"
   }
 
